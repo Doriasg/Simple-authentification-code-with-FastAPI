@@ -24,7 +24,7 @@ class UserCreate(BaseModel):
     nom: str
     prenoms: str | None = None
     sexe: str | None = None
-    location: str | None = None
+    localisation: str | None = None
 
 class Token(BaseModel):
     access_token: str
@@ -35,4 +35,10 @@ class UserUpdate(BaseModel):
     nom: str
     prenoms: str | None = None
     sexe: str | None = None
-    location: str | None = None
+    localisation: str | None = None
+
+class picture(BaseModel):
+    id: int
+    url: str
+    maladie: str | None = None
+    user_id: int

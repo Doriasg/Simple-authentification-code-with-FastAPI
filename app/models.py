@@ -5,6 +5,9 @@ class Users(SQLModel, table=True):
     nom: str
     prenoms: str | None = None
     email: str
+    sexe : str | None = None
+    localisation : str | None = None
     password: str
     disabled: bool = False
+    
 

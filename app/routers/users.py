@@ -50,7 +50,7 @@ def create_user(user: UserCreate, session: SessionDep):
         prenoms=user.prenoms,
         email=user.email,
         sexe = user.sexe,
-        location = user.location,
+        localisation = user.localisation,
         password=hashed,
         disabled=False
     )
