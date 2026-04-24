@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi import Depends, FastAPI
-from sqlmodel import create_engine
 from .routers import users
 from .database import create_db_and_tables
 from app.routers import pictures
