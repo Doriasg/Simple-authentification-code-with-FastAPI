@@ -22,11 +22,8 @@ from sqlmodel import SQLModel
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    with Session(engine) as session:
+        yield session

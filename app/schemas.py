@@ -1,44 +1,22 @@
-from pydantic import BaseModel
-
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, Field, EmailStr, constr
 from typing import Optional
 
-
-class User(BaseModel):
-    id: int
-    nom: str
-    prenoms: str | None = None
-    email: str
-    sexe: str | None = None
-    localisation: str | None = None
-    disabled: bool | None = None
-
-
-class UserInDB(User):
-    password: str
-
-    
 class UserCreate(BaseModel):
-    email: str
-    password: str
-    nom: str
-    prenoms: str | None = None
-    sexe: str | None = None
-    localisation: str | None = None
+    nom: constr(min_length=3, max_length=50, pattern="^[a-zA-Z]+$") = Field(..., example="ABLAKOUA")
+    prenoms: constr(min_length=3, max_length=50, pattern="^[a-zA-Z ]+$") = Field(..., example="John")
+    email: EmailStr = Field(..., example="john.ablakoua@example.com")
+    password: constr(min_length=4) = Field(..., example="@bl@2k26")
+    sexe: str = Field(..., example="M")
+    localisation: str = Field(..., example="Lon: 1.4 , Lat: 1,8")
 
-class Token(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str
 
 class UserUpdate(BaseModel):
-    nom: str
-    prenoms: str | None = None
-    sexe: str | None = None
-    localisation: str | None = None
+    nom: Optional[constr(min_length=3, pattern="^[a-zA-Z]+$")] = None
+    prenoms: Optional[constr(min_length=3, pattern="^[a-zA-Z ]+$")] = None
 
-class picture(BaseModel):
+
+class UserInDB(BaseModel):
     id: int
-    url: str
-    maladie: str | None = None
-    user_id: int
+    nom: str
+    prenoms: str
+    email: EmailStr
