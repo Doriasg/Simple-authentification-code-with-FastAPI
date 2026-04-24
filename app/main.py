@@ -13,6 +13,7 @@ def on_startup():
 
 app.include_router(users.router)
 app.include_router(pictures.router)
+app.include_router(auth.router)
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
