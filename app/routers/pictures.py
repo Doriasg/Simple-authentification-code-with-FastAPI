@@ -17,7 +17,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @router.post("/upload")
-def upload_plant_image(
+def save_plant_image(
     session: SessionDep,
     current_user: Users = Depends(get_current_user),
     file: UploadFile = File(...)
