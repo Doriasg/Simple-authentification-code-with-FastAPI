@@ -3,6 +3,7 @@ from fastapi import Depends, FastAPI
 from .routers import users
 from .database import create_db_and_tables
 from app.routers import pictures
+from app.routers import auth
 
 app = FastAPI()
 
@@ -11,6 +12,7 @@ app = FastAPI()
 def on_startup():
     create_db_and_tables()  # ← appelé après que les modèles sont importés
 
+app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(pictures.router)
 
