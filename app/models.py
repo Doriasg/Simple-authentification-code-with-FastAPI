@@ -1,13 +1,14 @@
 from sqlmodel import SQLModel, Field, Relationship
 from pydantic import BaseModel
 from typing import List
+from typing import Optional
 class Users(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nom: str
     prenoms: str | None = None
     email: str
-    sexe : str | None = None
-    localisation : str | None = None
+    sexe : Optional[str] | None = None
+    localisation : Optional[str]  = None
     password: str
     disabled: bool = False
     images: List["PlantImage"] = Relationship(back_populates="user")
