@@ -22,7 +22,6 @@ class PlantImage(SQLModel, table=True):
 
     image_path: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
-
     user_id: int = Field(foreign_key="users.id")
-    disease_name: Optional[str] = None
+    disease_name: str
     user: Optional[Users] = Relationship(back_populates="images")

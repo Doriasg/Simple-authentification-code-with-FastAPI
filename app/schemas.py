@@ -24,3 +24,6 @@ class UserInDB(BaseModel):
     nom: str
     prenoms: str
     email: EmailStr
+
+class UploadImageRequest(BaseModel):
+    disease_name: str

@@ -7,6 +7,7 @@ from typing import Annotated
 from app.database import get_db
 from app.models import PlantImage, Users
 from app.dependencies import get_current_user
+from app.schemas import UploadImageRequest
 
 router = APIRouter()
 
@@ -18,27 +19,23 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/upload")
 def save_plant_image(
-    session: SessionDep,
+    session: SessionDep, data : UploadImageRequest,
     current_user: Users = Depends(get_current_user),
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    
 ):
     ext = file.filename.split(".")[-1]
     filename = f"{uuid.uuid4()}.{ext}"
     file_path = os.path.join(UPLOAD_DIR, filename)
-    maladie = ''
     # 1. sauvegarde fichier
     with open(file_path, "wb") as buffer:
         buffer.write(file.file.read())
-    table = {
-        "image_url": file_path,
-        'image_maladie': maladie if maladie else None
-    }
     # 2. création DB (EN DEHORS DU WITH)
     plant = PlantImage(
         image_path=file_path,
         user_id=current_user.id,
         created_at=datetime.utcnow(),
-        disease_name=table['image_maladie']
+        disease_name= data.disease_name
     )
 
     session.add(plant)
