@@ -56,15 +56,13 @@ def create_user(user: UserCreate, session: SessionDep):
 # -------------------------
 @router.post("/login")
 def login(
-    session: SessionDep, 
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()
+    
 ):
-    print("emailRecup=",form_data.username, "passwordRecup=", form_data.password)  # Debug: Affiche les données reçues
     user = session.exec(
         select(Users).where(Users.email == form_data.username)
     ).first()
-    print("Utilisateur trouvé:", user.email, ':', verify_password(form_data.password, user.password))  # Debug: Affiche l'utilisateur trouvé
-    
+
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
