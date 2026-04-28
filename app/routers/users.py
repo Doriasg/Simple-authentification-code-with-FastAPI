@@ -20,7 +20,7 @@ SessionDep = Annotated[Session, Depends(get_db)]
 # -------------------------
 # CURRENT USER
 # -------------------------
-@router.get("/users/me")
+@router.get("/profil")
 def read_current_user(
     current_user: Annotated[Users, Depends(get_current_user)]
 ):
@@ -29,7 +29,7 @@ def read_current_user(
 # -------------------------
 # UPDATE USER
 # -------------------------
-@router.put("/users/me")
+@router.put("/modifier")
 def update_user(
     user_update: UserUpdate,
     session: SessionDep,
