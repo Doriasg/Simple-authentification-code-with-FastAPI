@@ -19,9 +19,10 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/upload")
 def save_plant_image(
-    session: SessionDep, data : UploadImageRequest,
+    session: SessionDep,
     current_user: Users = Depends(get_current_user),
     file: UploadFile = File(...),
+    disease_name : str = Form(None)
     
 ):
     ext = file.filename.split(".")[-1]
@@ -35,7 +36,7 @@ def save_plant_image(
         image_path=file_path,
         user_id=current_user.id,
         created_at=datetime.utcnow(),
-        disease_name= data.disease_name
+        disease_name= disease_name
     )
 
     session.add(plant)
