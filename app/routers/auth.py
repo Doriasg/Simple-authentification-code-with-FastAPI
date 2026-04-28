@@ -54,7 +54,7 @@ def create_user(user: UserCreate, session: SessionDep):
 # -------------------------
 # LOGIN
 # -------------------------
-@router.post("/token")
+@router.post("/login")
 def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: SessionDep
