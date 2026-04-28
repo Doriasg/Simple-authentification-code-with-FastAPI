@@ -56,20 +56,20 @@ def create_user(user: UserCreate, session: SessionDep):
 # -------------------------
 @router.post("/login")
 def login(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    session: SessionDep
+    session: SessionDep, 
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ):
-
+    print("emailRecup=",form_data.username, "passwordRecup=", form_data.password)  # Debug: Affiche les données reçues
     user = session.exec(
         select(Users).where(Users.email == form_data.username)
     ).first()
-
+    print("Utilisateur trouvé:", user.email, ':', verify_password(form_data.password, user.password))  # Debug: Affiche l'utilisateur trouvé
+    
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Email ou mot de passe incorrect"
         )
-
     access_token = create_access_token({"sub": user.email})
     
 
