@@ -9,6 +9,7 @@ from app.database import get_db
 from app.security import hash_password, verify_password, create_access_token
 from app.dependencies import get_current_user
 from fastapi.security import OAuth2PasswordRequestForm
+from app.schemas import LoginRequest
 
 from typing import List
 from app.models import PlantImage
@@ -56,14 +57,14 @@ def create_user(user: UserCreate, session: SessionDep):
 # -------------------------
 @router.post("/login")
 def login(
-    session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()
+    session: SessionDep, data: LoginRequest
     
 ):
     user = session.exec(
-        select(Users).where(Users.email == form_data.username)
+        select(Users).where(Users.email == data.email)
     ).first()
 
-    if not user or not verify_password(form_data.password, user.password):
+    if not user or not verify_password(data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Email ou mot de passe incorrect"

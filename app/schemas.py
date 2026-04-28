@@ -14,7 +14,11 @@ class UserUpdate(BaseModel):
     nom: Optional[constr(min_length=3, pattern="^[a-zA-Z]+$")] = None
     prenoms: Optional[constr(min_length=3, pattern="^[a-zA-Z ]+$")] = None
 
+from pydantic import BaseModel, EmailStr
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
 class UserInDB(BaseModel):
     id: int
     nom: str
