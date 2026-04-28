@@ -57,7 +57,7 @@ def update_user(
         "user": user
     }
 
-@router.get("/history")
+@router.get("/historique")
 def get_user_images(
     session: SessionDep,
     current_user: Users = Depends(get_current_user)
