@@ -8,6 +8,15 @@ from app.database import get_db
 from app.models import PlantImage, Users
 from app.dependencies import get_current_user
 from app.schemas import UploadImageRequest
+import cloudinary
+import cloudinary.uploader
+
+cloudinary.config(
+    cloud_name="dwtzbiklb",
+    api_key="638477191621292",
+    api_secret="qe8pS8odtkH1I2DWEr9xd06SG_Q"
+)
+
 
 router = APIRouter()
 
@@ -25,15 +34,13 @@ def save_plant_image(
     disease_name : str = Form(None)
     
 ):
-    ext = file.filename.split(".")[-1]
-    filename = f"{uuid.uuid4()}.{ext}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
-    # 1. sauvegarde fichier
-    with open(file_path, "wb") as buffer:
-        buffer.write(file.file.read())
+    
+    result = cloudinary.uploader.upload(file.file)
+    image_url = result["secure_url"]
+
     # 2. création DB (EN DEHORS DU WITH)
     plant = PlantImage(
-        image_path=file_path,
+        image_path=image_url,
         user_id=current_user.id,
         created_at=datetime.utcnow(),
         disease_name= disease_name
