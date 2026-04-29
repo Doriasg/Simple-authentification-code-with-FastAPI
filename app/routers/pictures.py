@@ -9,11 +9,18 @@ import cloudinary
 import cloudinary.uploader
 import os
 
-# cloudinary.config(
-  #  cloud_name=os.getenv("CLOUD_NAME"),
-   # api_key=os.getenv("API_KEY"),
-   # api_secret=os.getenv("API_SECRET")
-#)*/
+if not all([
+    os.getenv("CLOUD_NAME"),
+    os.getenv("API_KEY"),
+    os.getenv("API_SECRET")
+]):
+    raise RuntimeError("Variables Cloudinary manquantes")
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET")
+)
 router = APIRouter()
 
 SessionDep = Annotated[Session, Depends(get_db)]
