@@ -8,13 +8,24 @@ from app.database import get_db
 from app.models import PlantImage, Users
 from app.dependencies import get_current_user
 from app.schemas import UploadImageRequest
+import cloudinary
+import cloudinary.uploader
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+cloudinary.config(
+  cloud_name=os.getenv("CLOUD_NAME"),
+  api_key=os.getenv("API_KEY"),
+  api_secret=os.getenv("API_SECRET"),
+  secure=True
+)
 
 router = APIRouter()
 
 SessionDep = Annotated[Session, Depends(get_db)]
 
-UPLOAD_DIR = "uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @router.post("/upload")
@@ -25,15 +36,14 @@ def save_plant_image(
     disease_name : str = Form(None)
     
 ):
-    ext = file.filename.split(".")[-1]
-    filename = f"{uuid.uuid4()}.{ext}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
-    # 1. sauvegarde fichier
-    with open(file_path, "wb") as buffer:
-        buffer.write(file.file.read())
-    # 2. création DB (EN DEHORS DU WITH)
+    # Téléversez le fichier reçu vers Cloudinary
+    upload_result = cloudinary.uploader.upload(file.file)
+    
+    # Récupérez l’URL sécurisée
+    secure_url = upload_result["secure_url"]
+    print("URL sécurisée de l'image téléversée :", secure_url)
     plant = PlantImage(
-        image_path=file_path,
+        image_path=secure_url,
         user_id=current_user.id,
         created_at=datetime.utcnow(),
         disease_name= disease_name

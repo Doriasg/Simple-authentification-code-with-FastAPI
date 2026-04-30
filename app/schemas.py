@@ -27,3 +27,8 @@ class UserInDB(BaseModel):
 
 class UploadImageRequest(BaseModel):
     disease_name: str
+
+class UpdatePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
+    new_password_confirm: str
