@@ -3,13 +3,19 @@ from typing import Annotated
 from sqlmodel import Session, select
 
 
-from app.schemas import UserCreate, UserUpdate
+from app.schemas import UserCreate, forgotPassword, resetPassword
 from app.models import Users
 from app.database import get_db
 from app.security import hash_password, verify_password, create_access_token
 from app.dependencies import get_current_user
 from fastapi.security import OAuth2PasswordRequestForm  
 from app.schemas import LoginRequest, UpdatePasswordRequest
+import random
+from email.message import EmailMessage
+from app.schemas import VerifyCode
+import smtplib
+from datetime import datetime, timedelta
+from app.security import hash_password, verify_password, create_access_token
 
 
 from typing import List
@@ -122,3 +128,70 @@ def update_password(
     session.refresh(user)
 
     return {"message": "Mot de passe mis à jour avec succès"}
+
+@router.post('/forgot_password')
+    
+def forgot_password(password_data: forgotPassword,
+                     users = Depends(get_db),
+                     db = Depends(get_db)):
+        user = users.query(Users).filter(Users.email == password_data.email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="Email non trouvé")      
+        code = random.randint(100000, 999999)
+
+        user.reset_code = hash_password(str(code))
+        user.reset_code_expires_at = datetime.utcnow() + timedelta(minutes=15)
+        db.commit()
+        msg = EmailMessage()
+        msg.set_content(
+                    f"Le code de réinitialisation de votre compte monlinkountche est : {code}"
+                )
+        sender = 'assogbadoriane6@gmail.com'
+        receiver = password_data.email
+
+        msg['Subject'] = 'Code de réinitialisation'
+        msg['From'] = sender
+        msg['To'] = receiver
+
+        try:
+                    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as s:
+                        s.login(sender, 'xcgvyaiqbyaeutwp')
+                        s.send_message(msg)
+
+        except Exception as e:
+                    print("Erreur:", e)
+        return {"message": "Email envoyé"}
+        
+
+@router.post('/reset_password')
+def reset_password(reset_data: resetPassword,
+                   db = Depends(get_db)):
+
+    user = db.query(Users).filter(
+        Users.email == reset_data.email
+    ).first()
+
+    if not user:
+        raise HTTPException(404, "Utilisateur non trouvé")
+
+    if not user.reset_code:
+        raise HTTPException(400, "Aucun code de réinitialisation")
+
+    if user.reset_code_expires_at < datetime.utcnow():
+        raise HTTPException(400, "Code expiré")
+
+    if not verify_password(reset_data.code, user.reset_code):
+        raise HTTPException(400, "Code invalide")
+
+    if reset_data.new_password != reset_data.new_password_confirm:
+        raise HTTPException(400, "Les mots de passe ne correspondent pas")
+
+    user.password = hash_password(reset_data.new_password)
+
+    # invalider code
+    user.reset_code = None
+    user.reset_code_expires_at = None
+
+    db.commit()
+
+    return {"message": "Mot de passe réinitialisé avec succès"}

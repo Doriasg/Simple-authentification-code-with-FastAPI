@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, constr
+from pydantic import BaseModel, Field, EmailStr, constr, field_validator
 from typing import Optional
 
 class UserCreate(BaseModel):
@@ -7,6 +7,8 @@ class UserCreate(BaseModel):
     email: EmailStr = Field(..., example="john.ablakoua@example.com")
     password: constr(min_length=4) = Field(..., example="@bl@2k26")
     sexe: Optional[str] = Field(None, example="M")
+    reset_code : Optional[str] = None
+    reset_code_expires_at : Optional[str] = None
     localisation: Optional[str] = Field(None, example="Lon: 1.4 , Lat: 1,8")
 
 
@@ -32,3 +34,18 @@ class UpdatePasswordRequest(BaseModel):
     old_password: str
     new_password: str
     new_password_confirm: str
+
+class forgotPassword(BaseModel):
+    email: EmailStr
+
+class VerifyCode(BaseModel):
+    code: str
+
+class resetPassword(BaseModel):
+    email: EmailStr
+    code: str
+    new_password: str
+    new_password_confirm: str
+    
+
+        

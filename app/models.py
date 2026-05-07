@@ -8,6 +8,8 @@ class Users(SQLModel, table=True):
     prenoms: str | None = None
     email: str
     sexe : Optional[str] | None = None
+    reset_code : Optional[str]  = None
+    reset_code_expires_at : Optional[str]  = None
     localisation : Optional[str]  = None
     password: str
     disabled: bool = False
