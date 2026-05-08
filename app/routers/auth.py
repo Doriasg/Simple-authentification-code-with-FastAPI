@@ -16,15 +16,14 @@ from app.schemas import VerifyCode
 import smtplib
 from datetime import datetime, timedelta
 from app.security import hash_password, verify_password, create_access_token
-
-
+import os
 from typing import List
 from app.models import PlantImage
 
 router = APIRouter()
 
 SessionDep = Annotated[Session, Depends(get_db)]
-
+EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
 # -------------------------
 # REGISTER
 # -------------------------
@@ -144,7 +143,7 @@ def forgot_password(password_data: forgotPassword,
         db.commit()
         msg = EmailMessage()
         msg.set_content(
-                    f"Le code de réinitialisation de votre compte monlinkountche est : {code}"
+                    f"Le code de réinitialisation de votre compte monlinkountche est : {code}. Ce code expire dans 15 minutes."
                 )
         sender = 'assogbadoriane6@gmail.com'
         receiver = password_data.email
@@ -155,7 +154,7 @@ def forgot_password(password_data: forgotPassword,
 
         try:
                     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as s:
-                        s.login(sender, 'xcgvyaiqbyaeutwp')
+                        s.login(sender, EMAIL_APP_PASSWORD)
                         s.send_message(msg)
 
         except Exception as e:
