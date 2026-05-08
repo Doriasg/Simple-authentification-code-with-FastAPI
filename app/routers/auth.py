@@ -141,6 +141,7 @@ def forgot_password(password_data: forgotPassword,
         user.reset_code = hash_password(str(code))
         user.reset_code_expires_at = datetime.utcnow() + timedelta(minutes=15)
         db.commit()
+        print("EMAIL SENDING START")
         msg = EmailMessage()
         msg.set_content(
                     f"Le code de réinitialisation de votre compte monlinkountche est : {code}. Ce code expire dans 15 minutes."
@@ -159,6 +160,7 @@ def forgot_password(password_data: forgotPassword,
 
         except Exception as e:
                     print("Erreur:", e)
+        print('EMAIL SENT')
         return {"message": "Email envoyé"}
         
 
