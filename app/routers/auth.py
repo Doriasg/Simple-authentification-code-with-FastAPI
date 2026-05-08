@@ -19,11 +19,19 @@ from app.security import hash_password, verify_password, create_access_token
 import os
 from typing import List
 from app.models import PlantImage
+import resend
 
 router = APIRouter()
 
 SessionDep = Annotated[Session, Depends(get_db)]
 EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
+resend.api_key = "re_3yu1Vp6R_D3aJWDeDFnEVohVfCjiGgJDp"
+
+params: resend.ApiKeys.CreateParams = {
+  "name": "Production",
+}
+
+resend.ApiKeys.create(params)
 # -------------------------
 # REGISTER
 # -------------------------
@@ -128,42 +136,24 @@ def update_password(
 
     return {"message": "Mot de passe mis à jour avec succès"}
 
+
+from app.dependencies import send_code_by_email
 @router.post('/forgot_password')
     
-def forgot_password(password_data: forgotPassword,
-                     users = Depends(get_db),
-                     db = Depends(get_db)):
-        user = users.query(Users).filter(Users.email == password_data.email).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="Email non trouvé")      
-        code = random.randint(100000, 999999)
+@router.post("/forgot_password")
+async def forgot_password(
+    password_data: forgotPassword,
+    db: Session = Depends(get_db)
+):
+    user = db.query(Users).filter(Users.email == password_data.email).first()
 
-        user.reset_code = hash_password(str(code))
-        user.reset_code_expires_at = datetime.utcnow() + timedelta(minutes=15)
-        db.commit()
-        print("EMAIL SENDING START")
-        msg = EmailMessage()
-        msg.set_content(
-                    f"Le code de réinitialisation de votre compte monlinkountche est : {code}. Ce code expire dans 15 minutes."
-                )
-        sender = 'assogbadoriane6@gmail.com'
-        receiver = password_data.email
+    if not user:
+        raise HTTPException(status_code=404, detail="Email non trouvé")
 
-        msg['Subject'] = 'Code de réinitialisation'
-        msg['From'] = sender
-        msg['To'] = receiver
+    await send_code_by_email(password_data, db)
 
-        try:
-                    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as s:
-                        s.login(sender, EMAIL_APP_PASSWORD)
-                        s.send_message(msg)
-
-        except Exception as e:
-                    print("Erreur:", e)
-        print('EMAIL SENT')
-        return {"message": "Email envoyé"}
+    return {"message": "Email envoyé"}
         
-
 @router.post('/reset_password')
 def reset_password(reset_data: resetPassword,
                    db = Depends(get_db)):
