@@ -19,19 +19,12 @@ from app.security import hash_password, verify_password, create_access_token
 import os
 from typing import List
 from app.models import PlantImage
-import resend
 
 router = APIRouter()
 
 SessionDep = Annotated[Session, Depends(get_db)]
 EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
-resend.api_key = "re_3yu1Vp6R_D3aJWDeDFnEVohVfCjiGgJDp"
 
-params: resend.ApiKeys.CreateParams = {
-  "name": "Production",
-}
-
-resend.ApiKeys.create(params)
 # -------------------------
 # REGISTER
 # -------------------------

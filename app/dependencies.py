@@ -4,7 +4,6 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from app.schemas import UserInDB, forgotPassword
 from app.database import SessionLocal
-import resend
 from datetime import datetime, timedelta
 import random
 import os
