@@ -10,15 +10,8 @@ from app.security import hash_password, verify_password, create_access_token
 from app.dependencies import get_current_user
 from fastapi.security import OAuth2PasswordRequestForm  
 from app.schemas import LoginRequest, UpdatePasswordRequest
-import random
-from email.message import EmailMessage
-from app.schemas import VerifyCode
-import smtplib
-from datetime import datetime, timedelta
-from app.security import hash_password, verify_password, create_access_token
+from datetime import datetime
 import os
-from typing import List
-from app.models import PlantImage
 
 router = APIRouter()
 
@@ -131,8 +124,7 @@ def update_password(
 
 
 from app.dependencies import send_code_by_email
-@router.post('/forgot_password')
-    
+
 @router.post("/forgot_password")
 async def forgot_password(
     password_data: forgotPassword,

@@ -47,5 +47,8 @@ class resetPassword(BaseModel):
     new_password: str
     new_password_confirm: str
     
+class PromptRequest(BaseModel):
+    prompt: str
 
-        
+class DiseaseData(BaseModel):
+    disease_name: str

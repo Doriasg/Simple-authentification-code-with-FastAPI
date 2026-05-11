@@ -4,6 +4,7 @@ from .routers import users
 from .database import create_db_and_tables
 from app.routers import pictures
 from app.routers import auth
+from app.routers import chatbot
 
 app = FastAPI()
 
@@ -15,6 +16,7 @@ def on_startup():
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(pictures.router)
+app.include_router(chatbot.router)
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
