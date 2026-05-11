@@ -34,7 +34,7 @@ def chatbot(prompt_request: PromptRequest):
         system_prompt = (
             "Tu es un expert en riziculture au Bénin. Et tu maitrise les pathologies du riz. Utilise exclusivement les extraits "
             f"scientifiques suivants pour répondre :\n\n{context}\n\n"
-            "Si la réponse n'est pas dans le texte, dis-le poliment. Ne fais aucune supposition."
+            "Si la réponse n'est pas dans le texte, dis-le poliment. Ne fais aucune supposition. Sois précis et concis"
         )
 
         messages = [
